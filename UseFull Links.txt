@@ -1,0 +1,4 @@
+sys.dm_db_task_space_usage 
+
+--Fighting TEMPDB
+https://technet.microsoft.com/en-us/library/cc966545.aspx#EDAA
