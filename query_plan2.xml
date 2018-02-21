@@ -1,0 +1,691 @@
+﻿<ShowPlanXML xmlns="http://schemas.microsoft.com/sqlserver/2004/07/showplan" Version="1.2" Build="12.0.4427.24">
+  <BatchSequence>
+    <Batch>
+      <Statements>
+        <StmtSimple StatementText="MERGE INTO WesternConnecticut_Danbury_Canon.history.MeasureResultProvider mrp&#xD;&#xA;&#x9;USING (&#xD;&#xA;&#x9;&#x9;Select job_key as LineageId&#xD;&#xA;&#x9;&#x9;&#x9;,mr.MeasureResultsId as MeasureResultId&#xD;&#xA;&#x9;&#x9;&#x9;,providerM.Id as ProviderMasterId&#xD;&#xA;&#x9;&#x9;FROM WesternConnecticut_Danbury_Canon.cqms.processed_measure_status_provider pmsp&#x9;&#x9;&#xD;&#xA;&#x9;&#x9;INNER JOIN #measureResultsWithCqmsIds mr&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;ON  pmsp.measure_id = mr.cqmsMeasureId&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;AND pmsp.patient_source_key = mr.cqmsPatientId&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;AND pmsp.visit_source_key = mr.cqmsVisitId&#xD;&#xA;&#x9;&#x9;INNER JOIN WesternConnecticut_Danbury_Canon.history.ProviderMaster providerM&#xD;&#xA;&#x9;&#x9;&#x9;ON pmsp.provider_source_key = providerM.AdvisoryMDMKey&#xD;&#xA;&#x9;&#x9;WHERE pmsp.provider_source_key != '-1' &#xD;&#xA;&#x9;&#x9;&#x9;AND pmsp.job_key = '000E2C72-E027-4272-BC3A-5C9AA1AA81BD' &#xD;&#xA;&#x9;) cqmsResults &#xD;&#xA;&#x9;ON&#x9;mrp.LineageId = cqmsResults.LineageId&#xD;&#xA;&#x9;&#x9;AND mrp.MeasureResultId = cqmsResults.MeasureResultId&#xD;&#xA;&#x9;&#x9;AND mrp.ProviderMasterId = cqmsResults.ProviderMasterId &#xD;&#xA;&#x9;WHEN NOT MATCHED BY TARGET THEN&#xD;&#xA;&#x9;INSERT &#xD;&#xA;&#x9;&#x9;(&#x9;RecordCreated ,RecordModified,RecordStatus&#xD;&#xA;           ,LineageId, MeasureResultId, ProviderMasterId&#xD;&#xA;        )&#xD;&#xA;     VALUES&#xD;&#xA;           (CURRENT_TIMESTAMP,CURRENT_TIMESTAMP, 'A'&#xD;&#xA;           ,cqmsResults.LineageId , cqmsResults.MeasureResultId, cqmsResults.ProviderMasterId&#xD;&#xA;           );" StatementId="1" StatementCompId="154" StatementType="MERGE" RetrievedFromCache="false" StatementSubTreeCost="0.0852484" StatementEstRows="1" StatementOptmLevel="FULL" QueryHash="0x83C4D3D5D42BE442" QueryPlanHash="0x5951919480FB333E" StatementOptmEarlyAbortReason="GoodEnoughPlanFound" CardinalityEstimationModelVersion="70">
+          <StatementSetOptions QUOTED_IDENTIFIER="true" ARITHABORT="false" CONCAT_NULL_YIELDS_NULL="true" ANSI_NULLS="true" ANSI_PADDING="true" ANSI_WARNINGS="true" NUMERIC_ROUNDABORT="false" />
+          <QueryPlan CachedPlanSize="104" CompileTime="12122" CompileCPU="5932" CompileMemory="1584">
+            <MemoryGrantInfo SerialRequiredMemory="0" SerialDesiredMemory="0" />
+            <OptimizerHardwareDependentProperties EstimatedAvailableMemoryGrant="696320" EstimatedPagesCached="348160" EstimatedAvailableDegreeOfParallelism="4" />
+            <RelOp NodeId="1" PhysicalOp="Clustered Index Merge" LogicalOp="Merge" EstimateRows="1" EstimateIO="0.05" EstimateCPU="5e-006" AvgRowSize="9" EstimatedTotalSubtreeCost="0.0852484" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+              <OutputList />
+              <Update DMLRequestSort="0">
+                <Object Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Index="[PK__MeasureR__3214EC076AA75E43]" Alias="[mrp]" IndexKind="Clustered" Storage="RowStore" />
+                <Object Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Index="[IX_history_MeasureResultProvider_MeasureResultId]" Alias="[mrp]" IndexKind="NonClustered" Storage="RowStore" />
+                <Object Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Index="[IX_history_MeasureResultProvider_ProviderId]" Alias="[mrp]" IndexKind="NonClustered" Storage="RowStore" />
+                <Object Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Index="[IX_history_MeasureResultProvider_ProviderMasterId]" Alias="[mrp]" IndexKind="NonClustered" Storage="RowStore" />
+                <Object Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Index="[IX_history_MeasureResultProvider_LineageId]" Alias="[mrp]" IndexKind="NonClustered" Storage="RowStore" />
+                <SetPredicate>
+                  <ScalarOperator ScalarString="[WesternConnecticut_Danbury_Canon].[history].[MeasureResultProvider].[ProviderMasterId] as [mrp].[ProviderMasterId] = [WesternConnecticut_Danbury_Canon].[history].[ProviderMaster].[Id] as [providerM].[Id],[WesternConnecticut_Danbury_Canon].[history].[MeasureResultProvider].[RecordStatus] as [mrp].[RecordStatus] = [Expr1009],[WesternConnecticut_Danbury_Canon].[history].[MeasureResultProvider].[LineageId] as [mrp].[LineageId] = [WesternConnecticut_Danbury_Canon].[cqms].[processed_measure_status_provider].[job_key] as [pmsp].[job_key],[WesternConnecticut_Danbury_Canon].[history].[MeasureResultProvider].[RecordModified] as [mrp].[RecordModified] = [Expr1010],[WesternConnecticut_Danbury_Canon].[history].[MeasureResultProvider].[RecordCreated] as [mrp].[RecordCreated] = [Expr1011],[WesternConnecticut_Danbury_Canon].[history].[MeasureResultProvider].[MeasureResultId] as [mrp].[MeasureResultId] = [tempdb].[dbo].[#measureResultsWithCqmsIds].[MeasureResultsId] as [mr].[MeasureResultsId],[WesternConnecticut_Danbury_Canon].[history].[MeasureResultProvider].[Id] as [mrp].[Id] = RaiseIfNullUpdate([Expr1008]),[WesternConnecticut_Danbury_Canon].[history].[MeasureResultProvider].[ProviderId] as [mrp].[ProviderId] = [Expr1012]">
+                    <ScalarExpressionList>
+                      <ScalarOperator>
+                        <MultipleAssign>
+                          <Assign>
+                            <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="ProviderMasterId" />
+                            <ScalarOperator>
+                              <Identifier>
+                                <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[ProviderMaster]" Alias="[providerM]" Column="Id" />
+                              </Identifier>
+                            </ScalarOperator>
+                          </Assign>
+                          <Assign>
+                            <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="RecordStatus" />
+                            <ScalarOperator>
+                              <Identifier>
+                                <ColumnReference Column="Expr1009" />
+                              </Identifier>
+                            </ScalarOperator>
+                          </Assign>
+                          <Assign>
+                            <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="LineageId" />
+                            <ScalarOperator>
+                              <Identifier>
+                                <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="job_key" />
+                              </Identifier>
+                            </ScalarOperator>
+                          </Assign>
+                          <Assign>
+                            <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="RecordModified" />
+                            <ScalarOperator>
+                              <Identifier>
+                                <ColumnReference Column="Expr1010" />
+                              </Identifier>
+                            </ScalarOperator>
+                          </Assign>
+                          <Assign>
+                            <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="RecordCreated" />
+                            <ScalarOperator>
+                              <Identifier>
+                                <ColumnReference Column="Expr1011" />
+                              </Identifier>
+                            </ScalarOperator>
+                          </Assign>
+                          <Assign>
+                            <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="MeasureResultId" />
+                            <ScalarOperator>
+                              <Identifier>
+                                <ColumnReference Database="[tempdb]" Schema="[dbo]" Table="[#measureResultsWithCqmsIds]" Alias="[mr]" Column="MeasureResultsId" />
+                              </Identifier>
+                            </ScalarOperator>
+                          </Assign>
+                          <Assign>
+                            <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="Id" />
+                            <ScalarOperator>
+                              <Intrinsic FunctionName="RaiseIfNullUpdate">
+                                <ScalarOperator>
+                                  <Identifier>
+                                    <ColumnReference Column="Expr1008" />
+                                  </Identifier>
+                                </ScalarOperator>
+                              </Intrinsic>
+                            </ScalarOperator>
+                          </Assign>
+                          <Assign>
+                            <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="ProviderId" />
+                            <ScalarOperator>
+                              <Identifier>
+                                <ColumnReference Column="Expr1012" />
+                              </Identifier>
+                            </ScalarOperator>
+                          </Assign>
+                        </MultipleAssign>
+                      </ScalarOperator>
+                    </ScalarExpressionList>
+                  </ScalarOperator>
+                </SetPredicate>
+                <ActionColumn>
+                  <ColumnReference Column="Action1007" />
+                </ActionColumn>
+                <RelOp NodeId="2" PhysicalOp="Compute Scalar" LogicalOp="Compute Scalar" EstimateRows="1" EstimateIO="0" EstimateCPU="1e-007" AvgRowSize="88" EstimatedTotalSubtreeCost="0.0352434" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                  <OutputList>
+                    <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="job_key" />
+                    <ColumnReference Database="[tempdb]" Schema="[dbo]" Table="[#measureResultsWithCqmsIds]" Alias="[mr]" Column="MeasureResultsId" />
+                    <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[ProviderMaster]" Alias="[providerM]" Column="Id" />
+                    <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="Id" />
+                    <ColumnReference Column="Action1007" />
+                    <ColumnReference Column="Expr1008" />
+                    <ColumnReference Column="Expr1009" />
+                    <ColumnReference Column="Expr1010" />
+                    <ColumnReference Column="Expr1011" />
+                    <ColumnReference Column="Expr1012" />
+                  </OutputList>
+                  <ComputeScalar>
+                    <DefinedValues>
+                      <DefinedValue>
+                        <ColumnReference Column="Expr1009" />
+                        <ScalarOperator ScalarString="'A'">
+                          <Const ConstValue="'A'" />
+                        </ScalarOperator>
+                      </DefinedValue>
+                      <DefinedValue>
+                        <ColumnReference Column="Expr1010" />
+                        <ScalarOperator ScalarString="CONVERT_IMPLICIT(datetime2(7),getdate(),0)">
+                          <Identifier>
+                            <ColumnReference Column="ConstExpr1022">
+                              <ScalarOperator>
+                                <Convert DataType="datetime2" Scale="7" Style="0" Implicit="1">
+                                  <ScalarOperator>
+                                    <Intrinsic FunctionName="getdate" />
+                                  </ScalarOperator>
+                                </Convert>
+                              </ScalarOperator>
+                            </ColumnReference>
+                          </Identifier>
+                        </ScalarOperator>
+                      </DefinedValue>
+                      <DefinedValue>
+                        <ColumnReference Column="Expr1011" />
+                        <ScalarOperator ScalarString="CONVERT_IMPLICIT(datetime2(7),getdate(),0)">
+                          <Identifier>
+                            <ColumnReference Column="ConstExpr1023">
+                              <ScalarOperator>
+                                <Convert DataType="datetime2" Scale="7" Style="0" Implicit="1">
+                                  <ScalarOperator>
+                                    <Intrinsic FunctionName="getdate" />
+                                  </ScalarOperator>
+                                </Convert>
+                              </ScalarOperator>
+                            </ColumnReference>
+                          </Identifier>
+                        </ScalarOperator>
+                      </DefinedValue>
+                      <DefinedValue>
+                        <ColumnReference Column="Expr1012" />
+                        <ScalarOperator ScalarString="NULL">
+                          <Const ConstValue="NULL" />
+                        </ScalarOperator>
+                      </DefinedValue>
+                    </DefinedValues>
+                    <RelOp NodeId="3" PhysicalOp="Compute Scalar" LogicalOp="Compute Scalar" EstimateRows="1" EstimateIO="0" EstimateCPU="1e-007" AvgRowSize="59" EstimatedTotalSubtreeCost="0.0352433" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                      <OutputList>
+                        <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="job_key" />
+                        <ColumnReference Database="[tempdb]" Schema="[dbo]" Table="[#measureResultsWithCqmsIds]" Alias="[mr]" Column="MeasureResultsId" />
+                        <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[ProviderMaster]" Alias="[providerM]" Column="Id" />
+                        <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="Id" />
+                        <ColumnReference Column="Action1007" />
+                        <ColumnReference Column="Expr1008" />
+                      </OutputList>
+                      <ComputeScalar ComputeSequence="1">
+                        <DefinedValues>
+                          <DefinedValue>
+                            <ColumnReference Column="Expr1008" />
+                            <ScalarOperator ScalarString="getconditionalidentity((1830297580),(81),NULL,[Action1007]=(4))">
+                              <Intrinsic FunctionName="getconditionalidentity">
+                                <ScalarOperator>
+                                  <Const ConstValue="(1830297580)" />
+                                </ScalarOperator>
+                                <ScalarOperator>
+                                  <Const ConstValue="(81)" />
+                                </ScalarOperator>
+                                <ScalarOperator>
+                                  <Const ConstValue="NULL" />
+                                </ScalarOperator>
+                                <ScalarOperator>
+                                  <Compare CompareOp="EQ">
+                                    <ScalarOperator>
+                                      <Identifier>
+                                        <ColumnReference Column="Action1007" />
+                                      </Identifier>
+                                    </ScalarOperator>
+                                    <ScalarOperator>
+                                      <Const ConstValue="(4)" />
+                                    </ScalarOperator>
+                                  </Compare>
+                                </ScalarOperator>
+                              </Intrinsic>
+                            </ScalarOperator>
+                          </DefinedValue>
+                        </DefinedValues>
+                        <RelOp NodeId="4" PhysicalOp="Top" LogicalOp="Top" EstimateRows="1" EstimateIO="0" EstimateCPU="1e-007" AvgRowSize="51" EstimatedTotalSubtreeCost="0.0352432" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                          <OutputList>
+                            <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="job_key" />
+                            <ColumnReference Database="[tempdb]" Schema="[dbo]" Table="[#measureResultsWithCqmsIds]" Alias="[mr]" Column="MeasureResultsId" />
+                            <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[ProviderMaster]" Alias="[providerM]" Column="Id" />
+                            <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="Id" />
+                            <ColumnReference Column="Action1007" />
+                          </OutputList>
+                          <Top RowCount="1" IsPercent="0" WithTies="0">
+                            <TopExpression>
+                              <ScalarOperator ScalarString="(0)">
+                                <Const ConstValue="(0)" />
+                              </ScalarOperator>
+                            </TopExpression>
+                            <RelOp NodeId="5" PhysicalOp="Filter" LogicalOp="Filter" EstimateRows="1" EstimateIO="0" EstimateCPU="4.8e-007" AvgRowSize="51" EstimatedTotalSubtreeCost="0.0352431" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                              <OutputList>
+                                <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="job_key" />
+                                <ColumnReference Database="[tempdb]" Schema="[dbo]" Table="[#measureResultsWithCqmsIds]" Alias="[mr]" Column="MeasureResultsId" />
+                                <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[ProviderMaster]" Alias="[providerM]" Column="Id" />
+                                <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="Id" />
+                                <ColumnReference Column="Action1007" />
+                              </OutputList>
+                              <Filter StartupExpression="0">
+                                <RelOp NodeId="6" PhysicalOp="Compute Scalar" LogicalOp="Compute Scalar" EstimateRows="1" EstimateIO="0" EstimateCPU="1e-007" AvgRowSize="51" EstimatedTotalSubtreeCost="0.0352426" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                                  <OutputList>
+                                    <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="job_key" />
+                                    <ColumnReference Database="[tempdb]" Schema="[dbo]" Table="[#measureResultsWithCqmsIds]" Alias="[mr]" Column="MeasureResultsId" />
+                                    <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[ProviderMaster]" Alias="[providerM]" Column="Id" />
+                                    <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="Id" />
+                                    <ColumnReference Column="Action1007" />
+                                  </OutputList>
+                                  <ComputeScalar ComputeSequence="1">
+                                    <DefinedValues>
+                                      <DefinedValue>
+                                        <ColumnReference Column="Action1007" />
+                                        <ScalarOperator ScalarString="ForceOrder(CASE WHEN [TrgPrb1005] IS NOT NULL THEN NULL ELSE (4) END)">
+                                          <Intrinsic FunctionName="ForceOrder">
+                                            <ScalarOperator>
+                                              <IF>
+                                                <Condition>
+                                                  <ScalarOperator>
+                                                    <Compare CompareOp="IS NOT">
+                                                      <ScalarOperator>
+                                                        <Identifier>
+                                                          <ColumnReference Column="TrgPrb1005" />
+                                                        </Identifier>
+                                                      </ScalarOperator>
+                                                      <ScalarOperator>
+                                                        <Const ConstValue="NULL" />
+                                                      </ScalarOperator>
+                                                    </Compare>
+                                                  </ScalarOperator>
+                                                </Condition>
+                                                <Then>
+                                                  <ScalarOperator>
+                                                    <Const ConstValue="NULL" />
+                                                  </ScalarOperator>
+                                                </Then>
+                                                <Else>
+                                                  <ScalarOperator>
+                                                    <Const ConstValue="(4)" />
+                                                  </ScalarOperator>
+                                                </Else>
+                                              </IF>
+                                            </ScalarOperator>
+                                          </Intrinsic>
+                                        </ScalarOperator>
+                                      </DefinedValue>
+                                    </DefinedValues>
+                                    <RelOp NodeId="7" PhysicalOp="Nested Loops" LogicalOp="Left Outer Join" EstimateRows="1" EstimateIO="0" EstimateCPU="4.18e-006" AvgRowSize="51" EstimatedTotalSubtreeCost="0.0352425" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                                      <OutputList>
+                                        <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="job_key" />
+                                        <ColumnReference Database="[tempdb]" Schema="[dbo]" Table="[#measureResultsWithCqmsIds]" Alias="[mr]" Column="MeasureResultsId" />
+                                        <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[ProviderMaster]" Alias="[providerM]" Column="Id" />
+                                        <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="Id" />
+                                        <ColumnReference Column="TrgPrb1005" />
+                                      </OutputList>
+                                      <NestedLoops Optimized="0">
+                                        <Predicate>
+                                          <ScalarOperator ScalarString="[WesternConnecticut_Danbury_Canon].[history].[MeasureResultProvider].[MeasureResultId] as [mrp].[MeasureResultId]=[tempdb].[dbo].[#measureResultsWithCqmsIds].[MeasureResultsId] as [mr].[MeasureResultsId] AND [WesternConnecticut_Danbury_Canon].[history].[MeasureResultProvider].[ProviderMasterId] as [mrp].[ProviderMasterId]=[WesternConnecticut_Danbury_Canon].[history].[ProviderMaster].[Id] as [providerM].[Id]">
+                                            <Logical Operation="AND">
+                                              <ScalarOperator>
+                                                <Compare CompareOp="EQ">
+                                                  <ScalarOperator>
+                                                    <Identifier>
+                                                      <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="MeasureResultId" />
+                                                    </Identifier>
+                                                  </ScalarOperator>
+                                                  <ScalarOperator>
+                                                    <Identifier>
+                                                      <ColumnReference Database="[tempdb]" Schema="[dbo]" Table="[#measureResultsWithCqmsIds]" Alias="[mr]" Column="MeasureResultsId" />
+                                                    </Identifier>
+                                                  </ScalarOperator>
+                                                </Compare>
+                                              </ScalarOperator>
+                                              <ScalarOperator>
+                                                <Compare CompareOp="EQ">
+                                                  <ScalarOperator>
+                                                    <Identifier>
+                                                      <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="ProviderMasterId" />
+                                                    </Identifier>
+                                                  </ScalarOperator>
+                                                  <ScalarOperator>
+                                                    <Identifier>
+                                                      <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[ProviderMaster]" Alias="[providerM]" Column="Id" />
+                                                    </Identifier>
+                                                  </ScalarOperator>
+                                                </Compare>
+                                              </ScalarOperator>
+                                            </Logical>
+                                          </ScalarOperator>
+                                        </Predicate>
+                                        <RelOp NodeId="8" PhysicalOp="Nested Loops" LogicalOp="Inner Join" EstimateRows="1" EstimateIO="0" EstimateCPU="4.18e-006" AvgRowSize="39" EstimatedTotalSubtreeCost="0.0154415" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                                          <OutputList>
+                                            <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="job_key" />
+                                            <ColumnReference Database="[tempdb]" Schema="[dbo]" Table="[#measureResultsWithCqmsIds]" Alias="[mr]" Column="MeasureResultsId" />
+                                            <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[ProviderMaster]" Alias="[providerM]" Column="Id" />
+                                          </OutputList>
+                                          <NestedLoops Optimized="0">
+                                            <OuterReferences>
+                                              <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="provider_source_key" />
+                                            </OuterReferences>
+                                            <RelOp NodeId="9" PhysicalOp="Nested Loops" LogicalOp="Inner Join" EstimateRows="2.27536" EstimateIO="0" EstimateCPU="9.51101e-006" AvgRowSize="160" EstimatedTotalSubtreeCost="0.0121522" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                                              <OutputList>
+                                                <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="job_key" />
+                                                <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="patient_source_key" />
+                                                <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="measure_id" />
+                                                <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="provider_source_key" />
+                                                <ColumnReference Database="[tempdb]" Schema="[dbo]" Table="[#measureResultsWithCqmsIds]" Alias="[mr]" Column="MeasureResultsId" />
+                                              </OutputList>
+                                              <NestedLoops Optimized="0">
+                                                <OuterReferences>
+                                                  <ColumnReference Column="Bmk1001" />
+                                                  <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="patient_source_key" />
+                                                  <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="measure_id" />
+                                                </OuterReferences>
+                                                <RelOp NodeId="10" PhysicalOp="Nested Loops" LogicalOp="Inner Join" EstimateRows="2.27536" EstimateIO="0" EstimateCPU="9.51101e-006" AvgRowSize="114" EstimatedTotalSubtreeCost="0.00657799" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                                                  <OutputList>
+                                                    <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="job_key" />
+                                                    <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="patient_source_key" />
+                                                    <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="measure_id" />
+                                                    <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="provider_source_key" />
+                                                    <ColumnReference Column="Bmk1001" />
+                                                  </OutputList>
+                                                  <NestedLoops Optimized="0">
+                                                    <OuterReferences>
+                                                      <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="visit_source_key" />
+                                                    </OuterReferences>
+                                                    <RelOp NodeId="11" PhysicalOp="Index Seek" LogicalOp="Index Seek" EstimateRows="1" EstimateIO="0.003125" EstimateCPU="0.0001581" AvgRowSize="113" EstimatedTotalSubtreeCost="0.0032831" TableCardinality="2.01214e+008" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                                                      <OutputList>
+                                                        <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="job_key" />
+                                                        <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="patient_source_key" />
+                                                        <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="visit_source_key" />
+                                                        <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="measure_id" />
+                                                        <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="provider_source_key" />
+                                                      </OutputList>
+                                                      <IndexScan Ordered="1" ScanDirection="FORWARD" ForcedIndex="0" ForceSeek="0" ForceScan="0" NoExpandHint="0" Storage="RowStore">
+                                                        <DefinedValues>
+                                                          <DefinedValue>
+                                                            <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="job_key" />
+                                                          </DefinedValue>
+                                                          <DefinedValue>
+                                                            <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="patient_source_key" />
+                                                          </DefinedValue>
+                                                          <DefinedValue>
+                                                            <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="visit_source_key" />
+                                                          </DefinedValue>
+                                                          <DefinedValue>
+                                                            <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="measure_id" />
+                                                          </DefinedValue>
+                                                          <DefinedValue>
+                                                            <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="provider_source_key" />
+                                                          </DefinedValue>
+                                                        </DefinedValues>
+                                                        <Object Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Index="[IX_jobKey]" Alias="[pmsp]" IndexKind="NonClustered" Storage="RowStore" />
+                                                        <SeekPredicates>
+                                                          <SeekPredicateNew>
+                                                            <SeekKeys>
+                                                              <Prefix ScanType="EQ">
+                                                                <RangeColumns>
+                                                                  <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="job_key" />
+                                                                </RangeColumns>
+                                                                <RangeExpressions>
+                                                                  <ScalarOperator ScalarString="{guid'000E2C72-E027-4272-BC3A-5C9AA1AA81BD'}">
+                                                                    <Const ConstValue="{guid'000E2C72-E027-4272-BC3A-5C9AA1AA81BD'}" />
+                                                                  </ScalarOperator>
+                                                                </RangeExpressions>
+                                                              </Prefix>
+                                                            </SeekKeys>
+                                                          </SeekPredicateNew>
+                                                        </SeekPredicates>
+                                                        <Predicate>
+                                                          <ScalarOperator ScalarString="[WesternConnecticut_Danbury_Canon].[cqms].[processed_measure_status_provider].[provider_source_key] as [pmsp].[provider_source_key]&lt;'-1' OR [WesternConnecticut_Danbury_Canon].[cqms].[processed_measure_status_provider].[provider_source_key] as [pmsp].[provider_source_key]&gt;'-1'">
+                                                            <Logical Operation="OR">
+                                                              <ScalarOperator>
+                                                                <Compare CompareOp="LT">
+                                                                  <ScalarOperator>
+                                                                    <Identifier>
+                                                                      <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="provider_source_key" />
+                                                                    </Identifier>
+                                                                  </ScalarOperator>
+                                                                  <ScalarOperator>
+                                                                    <Const ConstValue="'-1'" />
+                                                                  </ScalarOperator>
+                                                                </Compare>
+                                                              </ScalarOperator>
+                                                              <ScalarOperator>
+                                                                <Compare CompareOp="GT">
+                                                                  <ScalarOperator>
+                                                                    <Identifier>
+                                                                      <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="provider_source_key" />
+                                                                    </Identifier>
+                                                                  </ScalarOperator>
+                                                                  <ScalarOperator>
+                                                                    <Const ConstValue="'-1'" />
+                                                                  </ScalarOperator>
+                                                                </Compare>
+                                                              </ScalarOperator>
+                                                            </Logical>
+                                                          </ScalarOperator>
+                                                        </Predicate>
+                                                      </IndexScan>
+                                                    </RelOp>
+                                                    <RelOp NodeId="12" PhysicalOp="Index Seek" LogicalOp="Index Seek" EstimateRows="2.27536" EstimateIO="0.003125" EstimateCPU="0.000159503" AvgRowSize="15" EstimatedTotalSubtreeCost="0.0032845" TableCardinality="249630" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                                                      <OutputList>
+                                                        <ColumnReference Column="Bmk1001" />
+                                                      </OutputList>
+                                                      <IndexScan Ordered="1" ScanDirection="FORWARD" ForcedIndex="0" ForceSeek="0" ForceScan="0" NoExpandHint="0" Storage="RowStore">
+                                                        <DefinedValues>
+                                                          <DefinedValue>
+                                                            <ColumnReference Column="Bmk1001" />
+                                                          </DefinedValue>
+                                                        </DefinedValues>
+                                                        <Object Database="[tempdb]" Schema="[dbo]" Table="[#measureResultsWithCqmsIds]" Index="[IX_mrResultsWithCqmsIds_visit]" Alias="[mr]" IndexKind="NonClustered" Storage="RowStore" />
+                                                        <SeekPredicates>
+                                                          <SeekPredicateNew>
+                                                            <SeekKeys>
+                                                              <Prefix ScanType="EQ">
+                                                                <RangeColumns>
+                                                                  <ColumnReference Database="[tempdb]" Schema="[dbo]" Table="[#measureResultsWithCqmsIds]" Alias="[mr]" Column="cqmsVisitId" />
+                                                                </RangeColumns>
+                                                                <RangeExpressions>
+                                                                  <ScalarOperator ScalarString="[WesternConnecticut_Danbury_Canon].[cqms].[processed_measure_status_provider].[visit_source_key] as [pmsp].[visit_source_key]">
+                                                                    <Identifier>
+                                                                      <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="visit_source_key" />
+                                                                    </Identifier>
+                                                                  </ScalarOperator>
+                                                                </RangeExpressions>
+                                                              </Prefix>
+                                                            </SeekKeys>
+                                                          </SeekPredicateNew>
+                                                        </SeekPredicates>
+                                                      </IndexScan>
+                                                    </RelOp>
+                                                  </NestedLoops>
+                                                </RelOp>
+                                                <RelOp NodeId="14" PhysicalOp="RID Lookup" LogicalOp="RID Lookup" EstimateRows="1" EstimateIO="0.003125" EstimateCPU="0.0001581" AvgRowSize="77" EstimatedTotalSubtreeCost="0.00556474" TableCardinality="249630" Parallel="0" EstimateRebinds="1.27536" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                                                  <OutputList>
+                                                    <ColumnReference Database="[tempdb]" Schema="[dbo]" Table="[#measureResultsWithCqmsIds]" Alias="[mr]" Column="MeasureResultsId" />
+                                                  </OutputList>
+                                                  <IndexScan Lookup="1" Ordered="1" ScanDirection="FORWARD" ForcedIndex="0" ForceSeek="0" ForceScan="0" NoExpandHint="0" Storage="RowStore">
+                                                    <DefinedValues>
+                                                      <DefinedValue>
+                                                        <ColumnReference Database="[tempdb]" Schema="[dbo]" Table="[#measureResultsWithCqmsIds]" Alias="[mr]" Column="MeasureResultsId" />
+                                                      </DefinedValue>
+                                                    </DefinedValues>
+                                                    <Object Database="[tempdb]" Schema="[dbo]" Table="[#measureResultsWithCqmsIds]" Alias="[mr]" TableReferenceId="-1" IndexKind="Heap" Storage="RowStore" />
+                                                    <SeekPredicates>
+                                                      <SeekPredicateNew>
+                                                        <SeekKeys>
+                                                          <Prefix ScanType="EQ">
+                                                            <RangeColumns>
+                                                              <ColumnReference Column="Bmk1001" />
+                                                            </RangeColumns>
+                                                            <RangeExpressions>
+                                                              <ScalarOperator ScalarString="[Bmk1001]">
+                                                                <Identifier>
+                                                                  <ColumnReference Column="Bmk1001" />
+                                                                </Identifier>
+                                                              </ScalarOperator>
+                                                            </RangeExpressions>
+                                                          </Prefix>
+                                                        </SeekKeys>
+                                                      </SeekPredicateNew>
+                                                    </SeekPredicates>
+                                                    <Predicate>
+                                                      <ScalarOperator ScalarString="[WesternConnecticut_Danbury_Canon].[cqms].[processed_measure_status_provider].[measure_id] as [pmsp].[measure_id]=[tempdb].[dbo].[#measureResultsWithCqmsIds].[cqmsMeasureId] as [mr].[cqmsMeasureId] AND [WesternConnecticut_Danbury_Canon].[cqms].[processed_measure_status_provider].[patient_source_key] as [pmsp].[patient_source_key]=[tempdb].[dbo].[#measureResultsWithCqmsIds].[cqmsPatientId] as [mr].[cqmsPatientId]">
+                                                        <Logical Operation="AND">
+                                                          <ScalarOperator>
+                                                            <Compare CompareOp="EQ">
+                                                              <ScalarOperator>
+                                                                <Identifier>
+                                                                  <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="measure_id" />
+                                                                </Identifier>
+                                                              </ScalarOperator>
+                                                              <ScalarOperator>
+                                                                <Identifier>
+                                                                  <ColumnReference Database="[tempdb]" Schema="[dbo]" Table="[#measureResultsWithCqmsIds]" Alias="[mr]" Column="cqmsMeasureId" />
+                                                                </Identifier>
+                                                              </ScalarOperator>
+                                                            </Compare>
+                                                          </ScalarOperator>
+                                                          <ScalarOperator>
+                                                            <Compare CompareOp="EQ">
+                                                              <ScalarOperator>
+                                                                <Identifier>
+                                                                  <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="patient_source_key" />
+                                                                </Identifier>
+                                                              </ScalarOperator>
+                                                              <ScalarOperator>
+                                                                <Identifier>
+                                                                  <ColumnReference Database="[tempdb]" Schema="[dbo]" Table="[#measureResultsWithCqmsIds]" Alias="[mr]" Column="cqmsPatientId" />
+                                                                </Identifier>
+                                                              </ScalarOperator>
+                                                            </Compare>
+                                                          </ScalarOperator>
+                                                        </Logical>
+                                                      </ScalarOperator>
+                                                    </Predicate>
+                                                  </IndexScan>
+                                                </RelOp>
+                                              </NestedLoops>
+                                            </RelOp>
+                                            <RelOp NodeId="18" PhysicalOp="Index Seek" LogicalOp="Index Seek" EstimateRows="1" EstimateIO="0.003125" EstimateCPU="0.0001581" AvgRowSize="15" EstimatedTotalSubtreeCost="0.0032831" TableCardinality="204389" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                                              <OutputList>
+                                                <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[ProviderMaster]" Alias="[providerM]" Column="Id" />
+                                              </OutputList>
+                                              <IndexScan Ordered="1" ScanDirection="FORWARD" ForcedIndex="0" ForceSeek="0" ForceScan="0" NoExpandHint="0" Storage="RowStore">
+                                                <DefinedValues>
+                                                  <DefinedValue>
+                                                    <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[ProviderMaster]" Alias="[providerM]" Column="Id" />
+                                                  </DefinedValue>
+                                                </DefinedValues>
+                                                <Object Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[ProviderMaster]" Index="[IX_history_ProviderMaster_AdvisoryMDMKey]" Alias="[providerM]" IndexKind="NonClustered" Storage="RowStore" />
+                                                <SeekPredicates>
+                                                  <SeekPredicateNew>
+                                                    <SeekKeys>
+                                                      <Prefix ScanType="EQ">
+                                                        <RangeColumns>
+                                                          <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[ProviderMaster]" Alias="[providerM]" Column="AdvisoryMDMKey" />
+                                                        </RangeColumns>
+                                                        <RangeExpressions>
+                                                          <ScalarOperator ScalarString="[WesternConnecticut_Danbury_Canon].[cqms].[processed_measure_status_provider].[provider_source_key] as [pmsp].[provider_source_key]">
+                                                            <Identifier>
+                                                              <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[cqms]" Table="[processed_measure_status_provider]" Alias="[pmsp]" Column="provider_source_key" />
+                                                            </Identifier>
+                                                          </ScalarOperator>
+                                                        </RangeExpressions>
+                                                      </Prefix>
+                                                    </SeekKeys>
+                                                  </SeekPredicateNew>
+                                                </SeekPredicates>
+                                              </IndexScan>
+                                            </RelOp>
+                                          </NestedLoops>
+                                        </RelOp>
+                                        <RelOp NodeId="19" PhysicalOp="Compute Scalar" LogicalOp="Compute Scalar" EstimateRows="1" EstimateIO="0" EstimateCPU="1e-007" AvgRowSize="35" EstimatedTotalSubtreeCost="0.0197961" Parallel="0" EstimateRebinds="0" EstimateRewinds="1.78889e-008" EstimatedExecutionMode="Row">
+                                          <OutputList>
+                                            <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="Id" />
+                                            <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="MeasureResultId" />
+                                            <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="ProviderMasterId" />
+                                            <ColumnReference Column="TrgPrb1005" />
+                                          </OutputList>
+                                          <ComputeScalar>
+                                            <DefinedValues>
+                                              <DefinedValue>
+                                                <ColumnReference Column="TrgPrb1005" />
+                                                <ScalarOperator ScalarString="(1)">
+                                                  <Const ConstValue="(1)" />
+                                                </ScalarOperator>
+                                              </DefinedValue>
+                                            </DefinedValues>
+                                            <RelOp NodeId="20" PhysicalOp="Table Spool" LogicalOp="Eager Spool" EstimateRows="1" EstimateIO="0.013125" EstimateCPU="0.00010066" AvgRowSize="31" EstimatedTotalSubtreeCost="0.019796" Parallel="0" EstimateRebinds="0" EstimateRewinds="1.78889e-008" EstimatedExecutionMode="Row">
+                                              <OutputList>
+                                                <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="Id" />
+                                                <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="MeasureResultId" />
+                                                <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="ProviderMasterId" />
+                                              </OutputList>
+                                              <Spool>
+                                                <RelOp NodeId="21" PhysicalOp="Nested Loops" LogicalOp="Inner Join" EstimateRows="1" EstimateIO="0" EstimateCPU="4.18e-006" AvgRowSize="31" EstimatedTotalSubtreeCost="0.00657038" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                                                  <OutputList>
+                                                    <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="Id" />
+                                                    <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="MeasureResultId" />
+                                                    <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="ProviderMasterId" />
+                                                  </OutputList>
+                                                  <NestedLoops Optimized="0">
+                                                    <OuterReferences>
+                                                      <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="Id" />
+                                                    </OuterReferences>
+                                                    <RelOp NodeId="22" PhysicalOp="Index Seek" LogicalOp="Index Seek" EstimateRows="1" EstimateIO="0.003125" EstimateCPU="0.0001581" AvgRowSize="15" EstimatedTotalSubtreeCost="0.0032831" TableCardinality="1.0642e+006" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                                                      <OutputList>
+                                                        <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="Id" />
+                                                      </OutputList>
+                                                      <IndexScan Ordered="1" ScanDirection="FORWARD" ForcedIndex="0" ForceSeek="0" ForceScan="0" NoExpandHint="0" Storage="RowStore">
+                                                        <DefinedValues>
+                                                          <DefinedValue>
+                                                            <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="Id" />
+                                                          </DefinedValue>
+                                                        </DefinedValues>
+                                                        <Object Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Index="[IX_history_MeasureResultProvider_LineageId]" Alias="[mrp]" IndexKind="NonClustered" Storage="RowStore" />
+                                                        <SeekPredicates>
+                                                          <SeekPredicateNew>
+                                                            <SeekKeys>
+                                                              <Prefix ScanType="EQ">
+                                                                <RangeColumns>
+                                                                  <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="LineageId" />
+                                                                </RangeColumns>
+                                                                <RangeExpressions>
+                                                                  <ScalarOperator ScalarString="{guid'000E2C72-E027-4272-BC3A-5C9AA1AA81BD'}">
+                                                                    <Const ConstValue="{guid'000E2C72-E027-4272-BC3A-5C9AA1AA81BD'}" />
+                                                                  </ScalarOperator>
+                                                                </RangeExpressions>
+                                                              </Prefix>
+                                                            </SeekKeys>
+                                                          </SeekPredicateNew>
+                                                        </SeekPredicates>
+                                                      </IndexScan>
+                                                    </RelOp>
+                                                    <RelOp NodeId="24" PhysicalOp="Clustered Index Seek" LogicalOp="Clustered Index Seek" EstimateRows="1" EstimateIO="0.003125" EstimateCPU="0.0001581" AvgRowSize="23" EstimatedTotalSubtreeCost="0.0032831" TableCardinality="1.0642e+006" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                                                      <OutputList>
+                                                        <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="MeasureResultId" />
+                                                        <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="ProviderMasterId" />
+                                                      </OutputList>
+                                                      <IndexScan Lookup="1" Ordered="1" ScanDirection="FORWARD" ForcedIndex="0" ForceSeek="0" ForceScan="0" NoExpandHint="0" Storage="RowStore">
+                                                        <DefinedValues>
+                                                          <DefinedValue>
+                                                            <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="MeasureResultId" />
+                                                          </DefinedValue>
+                                                          <DefinedValue>
+                                                            <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="ProviderMasterId" />
+                                                          </DefinedValue>
+                                                        </DefinedValues>
+                                                        <Object Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Index="[PK__MeasureR__3214EC076AA75E43]" Alias="[mrp]" TableReferenceId="-1" IndexKind="Clustered" Storage="RowStore" />
+                                                        <SeekPredicates>
+                                                          <SeekPredicateNew>
+                                                            <SeekKeys>
+                                                              <Prefix ScanType="EQ">
+                                                                <RangeColumns>
+                                                                  <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="Id" />
+                                                                </RangeColumns>
+                                                                <RangeExpressions>
+                                                                  <ScalarOperator ScalarString="[WesternConnecticut_Danbury_Canon].[history].[MeasureResultProvider].[Id] as [mrp].[Id]">
+                                                                    <Identifier>
+                                                                      <ColumnReference Database="[WesternConnecticut_Danbury_Canon]" Schema="[history]" Table="[MeasureResultProvider]" Alias="[mrp]" Column="Id" />
+                                                                    </Identifier>
+                                                                  </ScalarOperator>
+                                                                </RangeExpressions>
+                                                              </Prefix>
+                                                            </SeekKeys>
+                                                          </SeekPredicateNew>
+                                                        </SeekPredicates>
+                                                      </IndexScan>
+                                                    </RelOp>
+                                                  </NestedLoops>
+                                                </RelOp>
+                                              </Spool>
+                                            </RelOp>
+                                          </ComputeScalar>
+                                        </RelOp>
+                                      </NestedLoops>
+                                    </RelOp>
+                                  </ComputeScalar>
+                                </RelOp>
+                                <Predicate>
+                                  <ScalarOperator ScalarString="[Action1007] IS NOT NULL">
+                                    <Compare CompareOp="IS NOT">
+                                      <ScalarOperator>
+                                        <Identifier>
+                                          <ColumnReference Column="Action1007" />
+                                        </Identifier>
+                                      </ScalarOperator>
+                                      <ScalarOperator>
+                                        <Const ConstValue="NULL" />
+                                      </ScalarOperator>
+                                    </Compare>
+                                  </ScalarOperator>
+                                </Predicate>
+                              </Filter>
+                            </RelOp>
+                          </Top>
+                        </RelOp>
+                      </ComputeScalar>
+                    </RelOp>
+                  </ComputeScalar>
+                </RelOp>
+              </Update>
+            </RelOp>
+          </QueryPlan>
+        </StmtSimple>
+      </Statements>
+    </Batch>
+  </BatchSequence>
+</ShowPlanXML>

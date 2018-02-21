@@ -1,0 +1,84 @@
+<?query --
+With  tableOpData as 
+                    (
+					        select 
+						        temp_outpatientdischarge.encounter, 
+						        patientkey  as patient, 
+						        phys_disch.physiciankey as DischargePhysician,
+                                admissiondatekey as admissiondate,
+						        dischargedatekey as discharge_date,
+                                Convert(Datetime,temp_outpatientdischarge.admission_time) admission_time,
+                                Convert(Datetime,temp_outpatientdischarge.discharge_time) discharge_time, 
+						        dischargedispositionkey as dischargedisposition,
+						        hospitalkey as hospital,
+						        length_of_stay as LengthOfStay,
+						        patient_age_at_discharge as PatientAgeAtDischarge,
+						        Cast(temp_outpatientdischarge.total_Charge as money) TotalCharges ,
+						        total_cost TotalCosts,
+						        @informationNotAvailable AdmissionSource,
+						        temp_outpatientdischarge.ADMITTYPE,
+                                payorclasskey,
+                                temp_outpatientdischarge.ExcludeForGuidelines,
+                                ICD9Key,
+                                temp_outpatientdischarge.dischargingservice
+                                ,
+                                temp_outpatientdischarge.ObsLengthOfStay,
+                                PatientTypes.PatientTypeKey,
+                                CustomFocusElements.CustomFocusElementKey,
+                                @serviceLineKey AS ServiceLineKey,
+                            Case WHEN temp_outpatientdischarge.IsED IS NOT NULL THEN temp_outpatientdischarge.ISED ELSE 0  END AS IsED,
+                            Case WHEN temp_outpatientdischarge.IsAmbulatorySurgery IS NOT NULL THEN temp_outpatientdischarge.IsAmbulatorySurgery ELSE 0 END AS IsAmbulatorySurgery,
+							Case WHEN temp_outpatientdischarge.IsObservation IS NOT NULL THEN temp_outpatientdischarge.IsObservation ELSE 0 END AS IsObservation
+					        from temp_outpatientdischarge
+					        left outer join outpatientdischarges on temp_outpatientdischarge.encounter = outpatientdischarges.EncounterNumber
+					        inner join Patients on medical_record_number=medicalrecordnumber 
+					        inner join physicians phys_disch on temp_outpatientdischarge.Discharge_physician =phys_disch.physicianid
+                   	        inner join admissiondates on admission_date=admissiondates.admissiondate 
+					        inner join dischargedates on dischargedates.dischargedate=discharge_date
+                            inner join payorclasses on payorclasses.payorclass=payor_class
+					        inner join dischargedisposition on convert(varchar,dispositioncode) = convert(varchar,temp_outpatientdischarge.dischargedisposition)
+                            
+                            inner join ICD9Diagnoses on icd9_1 = ICD9Diagnoses.icd9code AND ((ICD9Diagnoses.ICDType = 9 and ICD9Diagnoses.EffectivityStartDate is null) OR 
+                                (ICD9Diagnoses.ICDType = 10 AND ((temp_outpatientdischarge.discharge_date between ICD9Diagnoses.EffectivityStartDate AND  ICD9Diagnoses.EffectivityEndDate)
+                                                    OR (temp_outpatientdischarge.discharge_date >= ICD9Diagnoses.EffectivityStartDate AND ICD9Diagnoses.EffectivityEndDate IS NULL))))                            
+                	        inner join hospitals on hospitals.Institution=temp_outpatientdischarge.hospital    
+                            inner join PatientTypes PatientTypes on PatientTypes.PatientTypeName = temp_outpatientdischarge.PatientTypeName
+                            inner join CustomFocusElements on CustomFocusElements.CustomFocusElementName = temp_outpatientdischarge.CustomFocusElementName
+                            where outpatientdischarges.EncounterNumber is not null
+                    )
+
+                        update outpatientdischarges
+					
+						SET EncounterNumber = encounternumber,
+						Patient = tmpopData.patient,
+						DischargePhysician = tmpopData.DischargePhysician,
+						AdmissionDate = tmpopData.admissiondate,
+						DischargeDate = tmpopData.discharge_date,
+                        AdmitTime = tmpopData.admission_time,
+                        Dischargetime = tmpopData.discharge_time,
+						DischargeDisposition = tmpopData.dischargedisposition,
+						Hospital = tmpopData.hospital,
+						LengthOfStay = tmpopData.LengthOfStay,
+						PatientAgeAtDischarge = tmpopData.PatientAgeAtDischarge,
+						TotalCharges = tmpopData.TotalCharges,
+						TotalCosts = tmpopData.TotalCosts,
+						AdmissionSource = tmpopData.AdmissionSource,
+						AdmissionType = tmpopData.ADMITTYPE,
+                        PayorClass = tmpopData.payorclasskey,
+                        ExcludeForGuidelines = tmpopData.ExcludeForGuidelines,
+                        PrimaryICD9Diagnoses = tmpopData.ICD9Key,
+                        DischargingService = tmpopData.dischargingservice
+                        ,
+                        ObsLengthOfStay= tmpopData.ObsLengthOfStay,
+                        PatientType = tmpopData.PatientTypeKey,
+                        CustomFocusElement = tmpopData.CustomFocusElementKey,
+                        ServiceLineKey = tmpopData.ServiceLineKey,
+                        PrimaryICD9DiagnosesHospital = PrimaryICD9DiagnosesHospital.PrimaryICD9DiagnosesHospitalkey,
+                        IsED = tmpopData.IsED,
+                        IsAmbulatorySurgery = tmpopData.IsAmbulatorySurgery,
+						IsObservation = tmpopData.IsObservation
+					    from OutpatientDischarges opd inner join
+                        tableOpData     tmpopData on opd.EncounterNumber = tmpopData.encounter
+                        inner join PrimaryICD9DiagnosesHospital on PrimaryICD9DiagnosesHospital.PrimaryICD9Diagnoses=tmpopData.ICD9key 
+                                and PrimaryICD9DiagnosesHospital.hospital=tmpopData.hospital
+--?>	CRIMSONAD\svc_cdaprod	(8ms)IO_COMPLETION	         43,928,711	         51,657,824	         51,657,664	NULL	                   6,576	                      21	                 1,080	               9,542	suspended	                  2	NULL	ATXCDAWAPP-P01	Lutheran_ParkRidge_Redeployment	.Net SqlClient Data Provider	2016-06-11 10:18:44.470	2016-06-11 10:17:00.437	0	2016-06-14 10:59:45.437
