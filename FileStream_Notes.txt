@@ -1,0 +1,117 @@
+how to remove contentens from filestream filegroup in sql server.
+filestream saving file in TEMP folder.
+
+https://blogs.msdn.microsoft.com/psssql/2011/06/23/how-it-works-filestream-rsfx-garbage-collection/
+
+
+use [DeltaDB] 
+go 
+select * from sys.objects where name like '%tombstone%' 
+go 
+select * from sys.filestream_tombstone_2073058421 order by oplsn_fseqno asc, oplsn_bOffset asc, oplsn_slotid asc 
+go
+
+
+CHECKPOINT 
+EXEC sp_filestream_force_garbage_collection 
+@dbname = N'DeltaDB'; 
+
+
+CHECKPOINT
+
+--USE [DeltaDB];
+--GO
+--EXEC sp_filestream_force_garbage_collection @dbname = N'DeltaDB' @filename = N'cmr_prod_FileTable';
+--GO
+
+
+
+
+select t.*, f.name as [FileStreamContainer],
+f.physical_name as [FileStreamContainerRoot],
+ p.object_id,
+ p.object_name(object_id)
+ from sys.filestream_tombstone_2073058421 t
+ inner join sys.database_files f on f.file_id = t.file_id       --Map to a database file
+inner join sys.partitions p on p.partition_id = t.rowset_guid    --Map to object
+
+
+select top(10)* from sys.partitions
+
+
+
+----sp_configure 'remote admin connections', 1;
+---- GO
+---- RECONFIGURE;
+---- GO
+
+
+--EXEC sp_configure 'remote access', 1 ;
+--GO
+--RECONFIGURE ;
+--GO
+
+
+--use [DeltaDB]
+--go 
+--select * from sys.objects where name like '%referraldocument%'
+--go 
+
+
+
+SELECT bs.[user_name],
+[bs].[backup_start_date], 
+[bs].[backup_finish_date], 
+[bs].[database_name] as [source_database_name], 
+[bmf].[physical_device_name] 
+FROM msdb..backupset bs
+INNER JOIN msdb..backupmediafamily bmf 
+ON [bs].[media_set_id] = [bmf].[media_set_id] 
+and bs.database_name like '%DeltaDB%'
+ORDER BY [bs].[backup_finish_date] DESC
+
+
+SELECT
+    [name],
+    [backup_start_date],
+    [type],
+    [first_lsn],
+    [database_backup_lsn]
+FROM
+    [msdb].[dbo].[backupset]
+WHERE
+    [database_name] = N'DeltaDB';
+GO
+
+
+
+
+use [DeltaDB]
+go 
+select * from sys.objects where name like '%referraldocument%'
+go 
+select * from sys.filestream_tombstone_2073058421 order by oplsn_fseqno asc, oplsn_bOffset asc, oplsn_slotid asc 
+go
+
+
+select TOP(10)* from referral.referraldocument
+
+1166264\1021535\AdamEveryman_CCD.xml
+
+
+
+sp_filestream_force_garbage_collection
+
+CHECKPOINT
+GO
+
+
+use [DeltaDB] 
+go 
+select * from sys.objects where name like '%tombstone%' 
+go 
+select * from sys.filestream_tombstone_2073058421 order by oplsn_fseqno asc, oplsn_bOffset asc, oplsn_slotid asc 
+go
+
+
+
