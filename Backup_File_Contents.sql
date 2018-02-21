@@ -1,0 +1,5 @@
+RESTORE HEADERONLY FROM DISK='C:\Backup\Adv_Full.bak'
+
+RESTORE FILELISTONLY FROM DISK='C:\Backup\Adv_Full.bak'
+
+RESTORE LABELONLY FROM DISK='C:\Backup\Adv_Full.bak'

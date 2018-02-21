@@ -1,0 +1,28 @@
+Database Baseline metrics.
+
+1.Gather SQL Server Version and SQL Patching.
+2 & 3 . Service Status and Services Enabeled.
+4.Cluster Informtion
+5. Print Sevrer Details from above.
+6. Print Database Details ( Inlcudes Replication settings if any, Mirror enabled if any, Recovery model , DB Status)
+Best Practices Settings includes.
+7.Backup History.
+8. Code for 2000 servers any
+9. CPU count and Binaries Location from Registry for Location of error logs.
+10. Memory information and IP information.
+11.Commented Server Details
+12. Commented Database Details
+13. Backup Details
+14. Dropping tables created.
+15. Setting back the identifiers
+16. CPU and Logical CPU counting
+17. Find all enabled trace flags
+18. Top 10 Waits.
+19: PLE and Uptime
+
+Max and Min Memory Setting.
+Tempdb files allocation.
+Maxdop and Cost of threshold settings.
+Major Blocking happening.
+TraceFlags Enabled.
+Sysconfig changes from Default.
