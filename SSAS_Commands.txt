@@ -1,0 +1,114 @@
+MDX Query:
+all commands 
+
+SELECT * FROM $SYSTEM.DISCOVER_COMMANDS 
+
+select * from $system.discover_connections or select * from $system.discover_commands
+
+SELECT SESSION_SPID, SESSION_USER_NAME, SESSION_LAST_COMMAND, SESSION_LAST_COMMAND_ELAPSED_TIME_MS FROM $SYSTEM.DISCOVER_SESSIONS ORDER BY SESSION_LAST_COMMAND_ELAPSED_TIME_MS DESC
+
+1. Identify and Kill the Query
+Just like a SQL relational database, SSAS also has DMVs that provide insights into server activity, including connection information.  Run the below MDX query:
+
+    SELECT SESSION_SPID,
+           SESSION_USER_NAME,
+           SESSION_CURRENT_DATABASE,
+           SESSION_LAST_COMMAND,
+           SESSION_CPU_TIME_MS,
+           SESSION_ELAPSED_TIME_MS
+    FROM   $system.discover_sessions
+
+
+From these results, we can identify which session_id is the troublemaker.  Once identified, we can investigate further, and, if necessary, manually kill the session.  Killing the session can be done with the following XMLA command:
+
+    <Cancel xmlns="http://schemas.microsoft.com/analysisservices/2003/engine">
+           <ConnectionID>[CID]</ConnectionID>
+           <SessionID>[SID]</SessionID>
+           <SPID>[SPID]</SPID>
+    </Cancel>
+
+	
+	Cmmand to get the Long Running and all sessions running currently on SSAS.
+
+MDX query 
+
+    SELECT
+    session_spid
+    , session_user_name
+    , session_last_command
+    , session_current_database
+    , session_cpu_time_ms
+    , session_elapsed_time_ms
+    , session_start_time
+    , session_last_command_start_time
+    , session_last_command_end_time
+    FROM $system.discover_sessions
+    WHERE session_status = 1
+    AND session_user_name = 'DomainName\MCoates'
+    ORDER BY session_start_time desc
+
+XMLA command to kill the session
+	
+	
+    <Cancel xmlns="http://schemas.microsoft.com/analysisservices/2003/engine">
+    <SPID>185325</SPID>
+    </Cancel>
+
+	How to rebuilt the config files in ssas ...
+	
+	https://karanspeaks.com/qq/
+	
+	
+	HOW TO MOVE THE SSAS CONFIG  files
+	
+1-stop analysis Services on your New Server from SQL Server Configuration Manager and close SQL Server Configuration Manager
+2-go to registry . START>RUN>regedit
+3-in registry , go to
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\MSSQLServerOLAPService. and Edit the Image path as per your new path.
+
+
+Or 
+
+- Disconnect all users from the cube
+- Open Analysis Manager
+- Right-click on server name
+- Open Properties and you will be able to see Data folder on General tab (typically c:\Program Files\Microsoft Analysis Services\Data)
+- Copy all files and sub-folders of Data folder to new location (using Command Prompt or Windows Explorer)
+- Go back to Analysis Manager and set path of Data folder to new location
+- Restart Analysis Services
+- Test new setup by querying OLAP databases/cubes
+- If everything is OK, delete original Data folde 
+	
+https://www.sqlbi.com/articles/heap-memory-settings-for-analysis-services-tabular-2012-2014/
+http://richardlees.blogspot.com/2012/01/analysis-services-configuration-options.html
+https://www.packtpub.com/books/content/sql-server-analysis-services-%E2%80%93-administering-and-monitoring-analysis-services	
+
+Administring permissions in SSAS
+https://www.mssqltips.com/sqlservertip/2776/configuring-permissions-for-sql-server-analysis-services/
+
+CUBE and Metadata information 
+
+https://bennyaustin.wordpress.com/2011/03/01/ssas-dmv-queries-cube-metadata/
+
+Power shell to gather all the servers information 
+https://www.simple-talk.com/sql/database-administration/let-powershell-do-an-inventory-of-your-servers/
+
+SSAS Documenting Best Practices
+
+http://byobi.com/2015/02/documenting-ssas-configuration-changes-over-time/
+
+	
+	
+    SELECT
+    session_spid
+    , session_user_name
+    , session_last_command
+    , session_current_database
+    , session_cpu_time_ms
+    , session_elapsed_time_ms
+    , session_start_time
+    , session_last_command_start_time
+    , session_last_command_end_time
+    FROM $system.discover_sessions
+    WHERE session_status = 1
+    ORDER BY session_start_time desc

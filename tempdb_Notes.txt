@@ -1,0 +1,73 @@
+sys.dm_db_task_space_usage 
+
+--Fighting TEMPDB
+https://technet.microsoft.com/en-us/library/cc966545.aspx#EDAA
+
+--PlandCache tempdb notes
+
+https://blogs.msdn.microsoft.com/sqlprogrammability/2007/01/23/4-0-useful-queries-on-dmvs-to-understand-plan-cache-behavior/
+
+
+query to search the plan cache for existing parallel plans and see the cost associations to current plans that executed parallel.
+
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED; 
+
+WITH XMLNAMESPACES   
+   (DEFAULT 'http://schemas.microsoft.com/sqlserver/2004/07/showplan')  
+SELECT  
+        query_plan AS CompleteQueryPlan, 
+        n.value('(@StatementText)[1]', 'VARCHAR(4000)') AS StatementText, 
+        n.value('(@StatementOptmLevel)[1]', 'VARCHAR(25)') AS StatementOptimizationLevel, 
+        n.value('(@StatementSubTreeCost)[1]', 'VARCHAR(128)') AS StatementSubTreeCost, 
+        n.query('.') AS ParallelSubTreeXML,  
+        ecp.usecounts, 
+        ecp.size_in_bytes 
+FROM sys.dm_exec_cached_plans AS ecp 
+CROSS APPLY sys.dm_exec_query_plan(plan_handle) AS eqp 
+CROSS APPLY query_plan.nodes('/ShowPlanXML/BatchSequence/Batch/Statements/StmtSimple') AS qn(n) 
+WHERE  n.query('.').exist('//RelOp[@PhysicalOp="Parallelism"]') = 1 
+
+
+
+tempdb allocation contention due to temparory tables created and this can be taken away by creating multiple tempdb files.
+
+
+PAGELATHC_EX / PAGELATHC_SH
+metadata contention -- applies to temparory tables created by multiple sessions but not variables. like eg.. @variable  and temptable #tab1
+
+Caused due to tempdb metadata management over head.
+
+
+use master
+
+select r.session_id,r.status , r.command,r.wait_types,r.wait_time,r.wait_resource
+from sys.dm_exec_requests r
+inner join sys.dm_exec_sessions s on (r.session_id,s.session_id)
+where program_name like 'SQLTest%'
+go
+
+dbcc tracestatus()
+go
+
+
+2:1:116
+
+
+sysschobjs -- system schema jobs -- represents object in a table
+
+
+change in configuraoitn manager in startup parameters -T1118 and then restart the instance.
+
+
+
+use temporary variables instead of temporary tables.
+
+
+EXEC master.dbo.sp_WhoIsActive
+  @show_own_spid = 1,
+  @get_plans = 1,
+  @get_outer_command = 1,
+  @get_transaction_info = 1,
+  @get_locks = 1,
+  @get_additional_info = 1
+

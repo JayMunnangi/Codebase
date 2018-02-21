@@ -1,0 +1,18 @@
+--Query Active Directory
+
+
+    For our example it looks like this: LDAP://DOMAIN.com/OU=Players,DC=DOMAIN,DC=com
+    LDAP://Domain.com - is the name of a domain controller
+    /OU=Players - this is the Organization Unit, in our case (Players)
+    ,DC - this is the Domain Name broken up by domain and extension name
+    So....LDAP://DomainControllerName.com/OU=OrganizationalUnit,DC=DOMAIN,DC=NAME 
+
+
+SELECT * FROM OpenQuery ( 
+  ADSI,  
+  'SELECT displayName, telephoneNumber, mail, mobile, facsimileTelephoneNumber 
+  FROM  ''LDAP://Advisory.com/OU=Players,DC=DOMAIN,DC=com'' 
+  WHERE objectClass =  ''User'' 
+  ') AS tblADSI
+ORDORDER BY displayname
+

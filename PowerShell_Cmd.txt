@@ -1,0 +1,5 @@
+Get-EventLog -ComputerName ATXMGAWMDB-S01 -LogName Application -EntryType "Error","Warning" -After(Get-Date).Adddays(-2)|Format-Table -Wrap -Property MachinName,Index,TimeGenerated,EntryType,Source,InstanceID,Message -AutoSize
+
+
+
+Get-WmiObject Win32_Service -ComputerName ATXMGAWMDB-S01,W-Remote -Filter "name LIke '%MSSQL%'"| ft __Server,State,Name,DisplayName,StartName -AutoSize

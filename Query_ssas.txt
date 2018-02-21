@@ -1,0 +1,27 @@
+	528658	139839	15478731	140403	0	with set [dim0_select_members] as '{[Benchmarks].[Benchmark Set].[Benchmark Set].AllMembers}'
+set [dim1_select_members] as '{[ICD10 Procedure].[ICD10 Procedure Hierarchy].[ICD10 Procedure].AllMembers}'
+set [dim2_select_members] as '{[CDM].[Charge Category Hierarchy].[CDM Desc].AllMembers}'
+set [dim3_select_members] as '{[ICD10 Diagnosis].[ICD10 Diagnosis Hierarchy].[ICD10 Diagnosis].AllMembers}'
+select {[Measures].[countInpatientDischarges]} on columns,
+non empty CROSSJOIN(CROSSJOIN(CROSSJOIN([dim0_select_members], [dim1_select_members]), [dim2_select_members]), [dim3_select_members]) on rows
+from [CCC Enterprise Reporting]
+
+
+
+
+	528971	37393	2	483948	0	with set [dim1_select_members] as '{[ICD10 Procedure].[ICD10 Procedure Hierarchy].[ICD10 Procedure].AllMembers}'
+set [dim2_select_members] as '{[CDM].[Charge Category Hierarchy].[CDM Desc].AllMembers}'
+select {[Measures].[countInpatientDischarges]} on columns,
+non empty CROSSJOIN(CROSSJOIN({[Benchmarks].[Benchmark Set].&[-1]}, [dim1_select_members]), [dim2_select_members]) on rows
+from [CCC Enterprise Reporting]
+
+
+	533722	0	312	0	0	SELECT SESSION_SPID, COMMAND_CPU_TIME_MS, COMMAND_ELAPSED_TIME_MS, COMMAND_READ_KB, COMMAND_WRITE_KB, COMMAND_TEXT FROM $system.DISCOVER_COMMANDS WHERE COMMAND_ELAPSED_TIME_MS > 0 ORDER BY COMMAND_CPU_TIME_MS DESC
+	
+	
+	
+	SUMA_
+	SUMA_
+	
+	
+	Occupied Total RAM Memory out for the services 
