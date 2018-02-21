@@ -1,0 +1,20 @@
+http://dba.stackexchange.com/questions/19870/how-to-identify-which-query-is-filling-up-the-tempdb-transaction-log
+http://blogs.lessthandot.com/index.php/datamgmt/datadesign/how-to-get-information-about-all-databas/
+https://sqlserverperformance.wordpress.com/2014/09/17/sql-server-diagnostic-information-queries-for-september-2014/
+http://maginaumova.com/find-and-tune-inefficient-query-executions/
+https://www.sqlskills.com/search/?q=tempdb+full
+http://www.sqlskills.com/blogs/paul/make-life-easier-on-yourself-get-a-baseline/
+https://social.technet.microsoft.com/Forums/sqlserver/en-US/7c154f42-6995-4df6-a834-498f53f8ee35/backup-restore-with-filestream-enabled?forum=sqldisasterrecovery
+https://wiki.advisory.com/pages/viewpage.action?spaceKey=EDM&title=Database+Reports
+http://atxedmwmdb-p01.crimsonad.local/Reports/Pages/Folder.aspx
+http://dba.stackexchange.com/questions/18315/restore-database-excluding-filestream-data
+
+
+https://www.mssqltips.com/sqlservertip/1854/how-to-backup-and-restore-a-sql-server-filestream-enabled-database/
+
+
+https://mssqlnet.wordpress.com/2012/07/10/sql-server-tempdb-increase-reducing-initial-size/
+
+
+Reduce the TEMPDB file size
+https://support.microsoft.com/en-us/kb/307487
