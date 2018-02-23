@@ -1,4 +1,4 @@
-CPMWSQL-P01 SErver
+
 
 1. Tempdb fies are not proper
 2. caches are good
